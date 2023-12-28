@@ -15,3 +15,7 @@ A repository where I put my notes and tests while I learn to use Docker as an ab
 ## Files in the directory
 - test.py : containes the actualy python code which is run in the container.
 - Dockerfile: the file used to build the image.
+
+## How to create and run the app 
+- Run the command ***sudo docker build -t test .*** to build the image
+- Run the command ***sudo docker run test*** to run the app
