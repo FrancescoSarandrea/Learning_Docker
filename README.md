@@ -12,9 +12,13 @@ A repository where I put my notes and tests while I learn to use Docker as an ab
 
 *Dockerfile*: a text file whichis used to construct the images (this is the file which we actually write in, together with the code of the application).
 
-## Files in the directory
+## Files in the main directory
 - test.py : containes the actualy python code which is run in the container.
 - Dockerfile: the file used to build the image.
+
+## Files in GWs
+- Dockerfile: the image installs GWpy and makes it possible to use it in the test
+- GW_test.py: a few lines of code which use GWpy libraries as a proof of concept
 
 ## How to create and run the app 
 - Run the command ***sudo docker build -t test .*** to build the image
