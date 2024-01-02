@@ -17,7 +17,8 @@ A repository where I put my notes and tests while I learn to use Docker as an ab
 - Dockerfile: the file used to build the image.
 
 ## Files in GWs
-- Dockerfile: the image installs GWpy and makes it possible to use it in the test
+- Dockerfile: the image installs GWpy, Jupyter and Pandas, whiah are all needed to run the jupyter notebook
+- WaveFormEncoder.ipynb: jupyter notebook with the Pix2Pix neural net 
 - GW_test.py: a few lines of code which use GWpy libraries as a proof of concept
 
 ## How to create and run the app 
