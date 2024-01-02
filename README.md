@@ -1,7 +1,7 @@
 # Learning_Docker
 A repository where I put my notes and tests while I learn to use Docker as an absolute beginner.
 
-Useful resources: 
+Useful resources:   
 [A Docker Tutorial For Beginners](https://docker-curriculum.com/)  
 [Docker vs. Virtual Machines: Differences You Should Know](https://cloudacademy.com/blog/docker-vs-virtual-machines-differences-you-should-know/)
 
