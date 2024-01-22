@@ -1,0 +1,40 @@
+FROM python:3.8
+
+
+RUN pip3 install rucio-clients
+
+
+FROM fedora:latest
+
+
+#RUN yum install -y gfal2-all
+RUN dnf -y install python3-gfal2 gfal2-plugin-file gfal2-plugin-gridftp gfal2-plugin-http gfal2-plugin-srm gfal2-plugin-xrootd xrootd-client gfal2-util
+
+WORKDIR /app
+
+# Copy the token file to the working directory inside the container
+COPY token.txt /app/
+
+# Set the BEARER_TOKEN environment variable from the token file
+ENV BEARER_TOKEN=$(cat /app/token.txt)
+
+#RUN export BEARER_TOKEN=$(cat /app/token.txt) 
+#&& echo "BEARER_TOKEN=$BEARER_TOKEN" >> /etc/environment
+
+
+# Copy the file to the working directory inside the container
+COPY clarabella.txt /app/
+
+
+
+#ENV BEARER_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1MFUyNmxSOVFMM2NhYTBaMnBtQ3NxQk1SN3ZJVmFtcmo3STNwYW1JaDk4In0.eyJleHAiOjE3MDU1MDUxMzgsImlhdCI6MTcwNTUwMTUzOCwiYXV0aF90aW1lIjoxNzA1NTAxNTM3LCJqdGkiOiJmOTA3NjlkNy00M2NmLTRiMjktYjZkOC1iOTUxYzAwMDI3YTIiLCJpc3MiOiJodHRwczovL2FhaS1kZW1vLmVnaS5ldS9hdXRoL3JlYWxtcy9lZ2kiLCJzdWIiOiIxMTNjMDE3NGE0MjZmZDRiNWNiMjM2OGQzZTc0YmJmNDk2NGVhOGZmMmEwNjQwMzVkMTU3M2UzNGRiYzkwNjBmQGVnaS5ldSIsInR5cCI6IkJlYXJlciIsImF6cCI6InRva2VuLXBvcnRhbCIsIm5vbmNlIjoiZjVmMDQwYzcxZDM0ZDZjNTY0MjQ5Yjc3YTZhNmI0NmUiLCJzZXNzaW9uX3N0YXRlIjoiMjRiNTRiNmQtMGY2NC00ZDMxLTlkMzUtNmRmMjlkNGQ1NzY0Iiwic2NvcGUiOiJvcGVuaWQgZWR1cGVyc29uX2VudGl0bGVtZW50IHZvcGVyc29uX2lkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiIyNGI1NGI2ZC0wZjY0LTRkMzEtOWQzNS02ZGYyOWQ0ZDU3NjQiLCJ2b3BlcnNvbl9pZCI6IjExM2MwMTc0YTQyNmZkNGI1Y2IyMzY4ZDNlNzRiYmY0OTY0ZWE4ZmYyYTA2NDAzNWQxNTczZTM0ZGJjOTA2MGZAZWdpLmV1IiwiYXV0aGVudGljYXRpbmdfYXV0aG9yaXR5IjoiaHR0cHM6Ly9pZHAuaW5mbi5pdC9zYW1sMi9pZHAvbWV0YWRhdGEucGhwIn0.WtqplZz-OH-H09alHLREb77N1IdKYt2OSQOgq2Dh8F5eWuHHxoZQtnFfiux3dwkArgELFCfcoGcR1orjYbMRRZq4Q1cnCPKIfGGyr0L-lgOXEZKKJDgZlKS0D87ny7juZBKQvB3KRE9MZOKI1xW4vbiV2959c2r8ElMBgAQzBveiWe3ViLrhEtb2c2KMlAZpPP1ywSKtySRYaHHipR2RXz7xiYF4ti1PAXC4BEFVLy3g-qlrWsxQNtMNfi78acQgPNOkI-LMDJ21H5c4YWAq6ecw8GdNHH-d4UglTB92KNj4xY8mk_mr-t2B41vBiNq827m8fbqPPGnwkM3PxJRcnw"
+
+
+# Run gfal-copy to copy the file and gfal-ls to list the files
+CMD ["sh", "-c", "gfal-copy clarabella.txt davs://xfer-intertwin.cr.cnaf.infn.it:8443/intertwin/virgo/sarandrea && gfal-ls davs://xfer-intertwin.cr.cnaf.infn.it:8443/intertwin/virgo/sarandrea"]
+
+#CMD ["sh", "-c", "export GFAL_HTTP_VERBOSE=1 && gfal-copy clarabella.txt davs://xfer-intertwin.cr.cnaf.infn.it:8443/intertwin/virgo/sarandrea && gfal-ls davs://xfer-intertwin.cr.cnaf.infn.it:8443/intertwin/virgo/sarandrea/"]
+
+#CMD ["echo $BEARER_TOKEN"]
+#RUN gfal-copy file:/app/local_file.txt davs://xfer-intertwin.cr.cnaf.infn.it:8443/intertwin/virgo/sarandrea/clarabella.txt && gfal-ls davs://xfer-intertwin.cr.cnaf.infn.it:8443/intertwin/virgo/sarandrea/
+

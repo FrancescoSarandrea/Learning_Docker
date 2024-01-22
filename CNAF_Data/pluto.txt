@@ -1,0 +1,1 @@
+"This is a text file used to test how to copy and read files from the webdev endpoint at CNAF using a dockerised environment" 
