@@ -1,0 +1,6 @@
+[repo-data-kit-edu]
+name=repo-data.kit.edu
+baseurl=https://repo.data.kit.edu//rockylinux/9
+gpgcheck=1
+enabled=1
+gpgkey=https://repo.data.kit.edu//repo-data-kit-edu-key.gpg
