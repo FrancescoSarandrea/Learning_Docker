@@ -1,6 +1,7 @@
 # has installed oidc client
 FROM docker.io/dvrbanec/rucio-client:latest   
-#FROM docker.io/rucio/rucio-clients:release-33.0.0 # cannot install oidc client on rootless docker
+#FROM docker.io/rucio/rucio-clients:release-33.0.0 
+# cannot install oidc client on rootless docker
 
 USER root
 
@@ -31,22 +32,28 @@ COPY ./rucio.cfg /root/rucio.cfg
 
 COPY ./virgo.voms /root/virgo.voms
 COPY ./setup_virgo_proxy.sh /root/setup_virgo_proxy.sh
-COPY ./cronfile /root/cronfile
 
 #COPY ./usercert.pem /root/.globus/usercert.pem
 #COPY ./userkey.pem /root/.globus/userkey.pem
 
 COPY ./usercert.pem /root/.globus/usercert.pem
 COPY ./userkey.pem /root/.globus/userkey.pem
+#COPY ./V-raw-1238279300-100.gwf /root/V-raw-1238279300-100.gwf
+
 
 #COPY ./cert-csr.pem /root/cert-csr.pem
 #COPY ./cert-key.pem /root/cert-key.pem
 
+#copy the list of channels which have units of length
+COPY ./channels_length_units_FINALFORREAL_1357894000.txt /root/channels_length_units_FINALFORREAL_1357894000.txt
+
 #copy scripts used to download V1-SL files
 COPY ./gspy_O3a_Scattered_Light_V1.csv /root/gspy_O3a_Scattered_Light_V1.csv 
 COPY ./O3_raw_CNAF.txt /root/O3_raw_CNAF.txt
-COPY ./download-cnaf-FS3.py /root/download-cnaf-FS3.py
+#COPY ./download-cnaf-smart.py /root/download-cnaf-smart.py 
+COPY ./download-cnaf-FS4.py /root/download-cnaf-FS4.py
 COPY ./gfal-commands.sh /root/gfal-commands.sh
+COPY ./test_expect.py /root/test_expect.py
 
 ENV OIDC_SOCK=/tmp/oidc-forward
 ENV RUCIO_CONFIG=/root/rucio.cfg
@@ -54,7 +61,7 @@ ENV OIDC_ENCRYPTION_PW=intertwin
 
 WORKDIR /root/
 RUN oidc-agent --version
-RUN ./add-egi.sh
+#RUN ./add-egi.sh
 
 #install Python and other dependencies
 
@@ -72,6 +79,9 @@ RUN dnf install -y python3 python3-pip && \
 #install additional Python packages
 RUN pip3 install --no-cache-dir gwpy pandas dask
 
+# Install dask and dask-execute
+RUN pip install dask[complete]
+
 # Install necessary system dependencies
 #RUN dnf install -y gcc python3-devel libtool-ltdl-devel libffi-devel openssl-devel lalsuite-python3
 
@@ -81,11 +91,16 @@ RUN pip3 install --no-cache-dir gwpy pandas dask
 
 RUN pip3 install lalsuite
 
-# Install Vim
+## Install Vim
 RUN dnf install -y vim && \
     dnf clean all
+
+# Install expect
+RUN dnf install -y expect
 
 #create directory where to save the h5 files
 RUN mkdir glitches
 
-CMD ["cron", "-f"]
+#RUN expect -c 'spawn voms-proxy-init --voms virgo:/virgo/virgo --vomses virgo.voms; expect "Enter GRID pass phrase:" {send "1Odiofacebook\n"}'
+
+
