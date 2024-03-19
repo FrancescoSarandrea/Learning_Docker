@@ -106,7 +106,7 @@ def get_file( glitch ):
         url='srm://storm-fe-archive.cr.cnaf.infn.it:8444'+row['path']
         
         try:
-            subprocess.run(['gfal-ls',url,filename],check = True)
+            subprocess.run(['gfal-ls','srm://storm-fe-archive.cr.cnaf.infn.it:8444/virgod0t1/Run/O3/raw/1238/V-raw-1238443600-100.gwf'],check = True)
         
         except Exception as error:
             expect_command = 'expect -c \'spawn voms-proxy-init --voms virgo:/virgo/virgo --vomses virgo.voms; expect "Enter GRID pass phrase:" {send "1Odiofacebook\\n"}\''
