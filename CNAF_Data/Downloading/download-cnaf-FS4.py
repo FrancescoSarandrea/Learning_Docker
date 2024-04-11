@@ -38,7 +38,7 @@ listfile='O3_raw_CNAF.txt'
 deltat=3
 
 # Output directory
-outdir=str(current_directory)+'/glitches'
+outdir=str(current_directory)+'/SL_glitches'
 #creating a new directory for output
 Path(outdir).mkdir(parents=True, exist_ok=True)
 print('Writing files in output directory: '+outdir)
@@ -54,23 +54,39 @@ df_list['duration']=split.map(lambda x: int(x[1]))
 
 
 # Read csv with glitches
-df_glitches  = pd.read_csv(csvfile,sep=',',usecols = ['id','GPStime','duration'])
+#df_glitches  = pd.read_csv(csvfile,sep=',',usecols = ['id','GPStime','duration'])
 df_glitches  = pd.read_csv(csvfile,sep=',')
 print(df_glitches.columns)
 
 
 #print('Duration 90th percentile: ',df_glitches.duration.quantile(0.9))
 # Remove entries with bad confidence
-df_glitches=df_glitches.drop(df_glitches[df_glitches.confidence <= 0.5].index)
+df_glitches=df_glitches.drop(df_glitches[df_glitches.confidence <= 0.8].index)
+
+
+
+
+try:
+    with open('already_downloaded.txt', 'r') as file:
+        lines = file.readlines()
+        #file_list=file.read()
+        #file_list=json.loads(file_list)
+except:
+    print('No files were already downloaded')
+
+file_list=[]
+for line in lines:
+    file_list.append(line.strip().strip('"'))
+print(file_list)
 
 # Avoid redownload
-# TODO da controllare
-file_list = glob.glob(outdir + "/*.h5")
+#file_list = glob.glob(outdir + "/*.h5")
 if len(file_list)>0:
  # get ids from file name
   glitch_ids = list(map(lambda f :  Path(f).stem, file_list))
-  #print(glitch_ids)
+  print(glitch_ids)
   df_glitches=df_glitches.drop(df_glitches[(df_glitches.id.isin(glitch_ids))].index)
+
 
 # limit the numebr of files to be downloaded
 #df_glitches=df_glitches.head(nfiles)
@@ -109,7 +125,7 @@ def get_file( glitch ):
             subprocess.run(['gfal-ls','srm://storm-fe-archive.cr.cnaf.infn.it:8444/virgod0t1/Run/O3/raw/1238/V-raw-1238443600-100.gwf'],check = True)
         
         except Exception as error:
-            expect_command = 'expect -c \'spawn voms-proxy-init --voms virgo:/virgo/virgo --vomses virgo.voms; expect "Enter GRID pass phrase:" {send "1Odiofacebook\\n"}\''
+            expect_command = expect_command = '''expect -c 'spawn voms-proxy-init --voms virgo:/virgo/virgo --vomses virgo.voms; expect "Enter GRID pass phrase for this identity:" {send "1Odiofacebook\\n"}; interact' '''
             subprocess.run(expect_command, shell=True)
             subprocess.run(['gfal-ls', 'srm://storm-fe-archive.cr.cnaf.infn.it:8444/virgod0t1/Run/O3/raw/1238/V-raw-1238443600-100.gwf'], check=True)
 
@@ -118,9 +134,9 @@ def get_file( glitch ):
         paths.append(filename)
 
 
-        with open('/data/notebooks_intertwin/channels_length_units_FINALFORREAL_1357894000.txt', 'r') as file:
-            channels_final=file.read()
-            channels_final=json.loads(channels_final)
+        with open('channels_for_SL.txt', 'r') as file:
+            channels=file.read()
+            channels=json.loads(channels)
         
         print('NUMBER OF ALL CHANNELS= '+str(len(channels)))
                 
@@ -141,12 +157,12 @@ def get_file( glitch ):
         
         
         #saving all the channels to file
-        with open(outdir+'/all_channels_'+glitch.id+'.txt', 'w') as file:
-            json.dump(channels, file)
+        #with open(outdir+'/all_channels_'+glitch.id+'.txt', 'w') as file:
+        #    json.dump(channels, file)
         
         #saving the excluded channels to file
-        with open(outdir+'/excluded_channels_'+glitch.id+'.txt', 'w') as file:
-            json.dump(excluded_channels, file)
+        #with open(outdir+'/excluded_channels_'+glitch.id+'.txt', 'w') as file:
+        #    json.dump(excluded_channels, file)
 
         
     # Write output file
@@ -175,6 +191,8 @@ def get_file( glitch ):
 #    global counter
 #    counter+=1
 #    pass
+    with open('already_downloaded.txt', 'a') as file:
+        file.write(glitch.id+ '\n')
 
     return 0
 
